@@ -1,0 +1,28 @@
+.compose-popup {
+  position: fixed;
+  left: 40%;
+  top: 55%;
+  padding: 10px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+}
+
+.compose-popup label {
+  display: block;
+}
+
+.compose-popup input,
+.compose-popup textarea {
+  width: 70%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.compose-popup button {
+  margin-left: 20px;
+  background-color: #4caf50;  
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}

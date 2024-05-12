@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In</title>
+    <link rel="stylesheet" type="text/css" href="/css/signInUp.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div style="display: none" id="alert-box-success">
+        <p id="success-message"></p>
+        <button id="success-button" onclick="hideSuccessAlert(event)">
+          OK
+        </button>
+      </div>
+
+      <div style="display: none" id="alert-box-fail">
+        <p id="fail-message"></p>
+        <button id="fail-button" onclick="hideFailureAlert(event)">
+          TRY AGAIN
+        </button>
+      </div>
+      <div class="screen">
+        <div class="screen_content">
+          <form class="login">
+            <h2 class="login_title">Welcome to Tmail</h2>
+            <div class="login_field">
+              <input
+                type="text"
+                class="login_input"
+                name="email"
+                id="emailInput"
+                placeholder="Email Address"
+              />
+            </div>
+            <div class="login_field">
+              <input
+                type="password"
+                class="login_input"
+                name="password"
+                id="passwordInput"
+                placeholder="Password"
+              />
+            </div>
+            <button
+              class="login_submit"
+              id="login-btn"
+              type="button"
+              onclick="signIn(event)"
+            >
+              <span class="button_text">Sign In Now</span>
+            </button>
+            <button
+              class="login_submit"
+              onclick="navigateToSignup(event)"
+              id="to-signup-btn"
+            >
+              <span class="button_text">Sign Up Here</span>
+            </button>
+          </form>
+        </div>
+        <div class="screen_background">
+          <span class="screen_background_shape screen_background_shape4"></span>
+          <span class="screen_background_shape screen_background_shape3"></span>
+          <span class="screen_background_shape screen_background_shape2"></span>
+          <span class="screen_background_shape screen_background_shape1"></span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const alertBoxSuccess = document.getElementById("alert-box-success");
+      const alertBoxFail = document.getElementById("alert-box-fail");
+      const successMessage = document.getElementById("success-message");
+      const failMessage = document.getElementById("fail-message");
+      const successButton = document.getElementById("success-button");
+      const failButton = document.getElementById("fail-button");
+
+      async function signIn(event) {
+        try {
+          const email = document.getElementById("emailInput").value;
+          const password = document.getElementById("passwordInput").value;
+          if (email === "" || password === "") {
+            showFailure("Can not leave any fields empty.");
+            return;
+          }
+          const requestBody = {
+            email: email,
+            password: password,
+          };
+          const response = await fetch("/api/v1/signIn", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+          });
+          if (response.ok) {
+            showSuccess("Sign in successful.");
+          } else {
+            console.log(response);
+            const error = await response.json();
+            showFailure(error.message);
+          }
+        } catch (error) {
+          showFailure(error.message);
+        }
+      }
+
+      function navigateToSignup(event) {
+        event.preventDefault();
+        window.location.href = "/signup";
+      }
+      function showSuccess(message) {
+        successMessage.innerHTML = message;
+        alertBoxSuccess.style.display = "block";
+      }
+      function showFailure(message) {
+        failMessage.innerHTML = message;
+        alertBoxFail.style.display = "block";
+      }
+      function hideSuccessAlert(event) {
+        event.preventDefault();
+        alertBoxSuccess.style.display = "none";
+        window.location.href = "/inbox";
+      }
+      function hideFailureAlert(event) {
+        event.preventDefault();
+        alertBoxFail.style.display = "none";
+      }
+    </script>
+  </body>
+</html>

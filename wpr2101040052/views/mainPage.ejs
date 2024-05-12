@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tmail</title>
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/in-out-box.css" />
+    <link rel="stylesheet" href="/css/compose.css" />
+    <link rel="stylesheet" href="/css/detail.css" />
+  </head>
+  <body>
+    <header>
+      <h1>TMail</h1>
+      <div>Hello <%=fullname %>!</div>
+      <button id="sign-out-btn">Sign Out</button>
+    </header>
+    <div style="display: none" id="alert-box">
+      <p id="message"></p>
+      <button id="alert-btn" onclick="closeAlertBox()">OK</button>
+    </div>
+    <nav>
+      <a href="#" onclick="showCompose()">Compose</a>
+      <a href="#" onclick="showInbox()">Inbox</a>
+      <a href="#" onclick="showOutbox()">Outbox</a>
+    </nav>
+
+    <main>
+      <div class="inbox-page" style="display: <%= iblock %>">
+        <h1>Inbox</h1>
+        <%- include('inboxPage') %>
+      </div>
+
+      <div class="outbox-page" style="display: <%= oblock %>">
+        <h1>Outbox</h1>
+        <%- include('outboxPage') %>
+      </div>
+      <div class="detail-page" style="display: <%= dblock %>">
+        <h1>Mail Details</h1>
+        <%- include('detailPage') %>
+      </div>
+      <div class="compose-page" style="display: none">
+        <div id="compose-popup" class="compose-popup">
+          <h2>Compose</h2>
+          <form
+            action="/send"
+            method="post"
+            id="compose-form"
+            enctype="multipart/form-data"
+          >
+            <label for="to">To:</label>
+            <select id="to" name="to" required>
+              <option value="" disabled selected>Select a user</option>
+
+              <% for (let i = 0; i < users.length; i++) { %>
+              <option value="<%= users[i].email %>">
+                <%= users[i].email %>
+              </option>
+              <% } %>
+            </select>
+
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" name="subject" required />
+
+            <label for="body">Body:</label>
+            <textarea id="body" name="body" rows="5" required></textarea>
+
+            <label for="attachment">Attachment:</label>
+            <input
+              type="file"
+              id="attachment"
+              name="attachment"
+              accept=".pdf, .doc, .docx, .jpg, .jpeg, .png"
+            />
+
+            <button type="submit">Send</button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <footer>&copy; 2023 Tmail</footer>
+
+    <script>
+      function showCompose() {
+        var composePage = document.getElementsByClassName("compose-page")[0];
+        composePage.style.display =
+          composePage.style.display === "none" ? "block" : "none";
+      }
+      function showInbox() {
+        window.location.href = "/inbox";
+      }
+
+      function showOutbox() {
+        window.location.href = "/outbox";
+      }
+      function openFileInput() {
+        document.getElementById("attachment").click();
+      }
+      const alertBox = document.getElementById("alert-box");
+      const message = document.getElementById("message");
+      const alertBtn = document.getElementById("alert-btn");
+      function showMessage(m) {
+        alertBox.style.display = "block";
+        message.innerHTML = m;
+      }
+      function closeAlertBox() {
+        alertBox.style.display = "none";
+        closeComposePopup();
+      }
+
+      document
+        .getElementById("compose-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          const to = document.getElementById("to").value;
+          const subject = document.getElementById("subject").value;
+          const body = document.getElementById("body").value;
+
+          const formData = new FormData();
+          formData.append("to", to);
+          formData.append("subject", subject);
+          formData.append("body", body);
+          const fileInput = document.getElementById("attachment");
+          if (fileInput.files.length > 0) {
+            formData.append("attachment", fileInput.files[0]);
+          }
+          fetch("/api/v1/send", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => {
+              if (response.ok) {
+                showMessage("Sent mail successfully.");
+              }
+            })
+            .catch((error) => {
+              console.error(
+                "There was a problem with the fetch operation:",
+                error
+              );
+            });
+        });
+
+      document
+        .getElementById("sign-out-btn")
+        .addEventListener("click", function (event) {
+          window.location.href = "/signout";
+        });
+    </script>
+  </body>
+</html>

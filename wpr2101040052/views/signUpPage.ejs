@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up</title>
+    <link rel="stylesheet" type="text/css" href="/css/signInUp.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div style="display: none" id="alert-box-success">
+        <p id="success-message"></p>
+        <button id="success-button" onclick="hideSuccessAlert(event)">
+          OK
+        </button>
+      </div>
+
+      <div style="display: none" id="alert-box-fail">
+        <p id="fail-message"></p>
+        <button id="fail-button" onclick="hideFailureAlert(event)">
+          TRY AGAIN
+        </button>
+      </div>
+
+      <div class="screen">
+        <div class="screen_content">
+          <form class="signup">
+            <h2 class="signup_title">Complete the form below</h2>
+            <div class="signup_field">
+              <input
+                type="text"
+                class="signup_input"
+                name="fullname"
+                id="nameInput"
+                placeholder="FullName"
+              />
+            </div>
+            <div class="signup_field">
+              <input
+                type="text"
+                class="signup_input"
+                name="email"
+                id="emailInput"
+                placeholder="Email Address"
+              />
+            </div>
+            <div class="signup_field">
+              <input
+                class="signup_input"
+                type="password"
+                name="password"
+                id="passwordInput"
+                placeholder="Password"
+              />
+            </div>
+            <div class="signup_field">
+              <input
+                class="signup_input"
+                type="password"
+                name="passwordRepeat"
+                id="passwordInputRepeat"
+                placeholder="Confirm Password"
+              />
+            </div>
+
+            <button
+              type="submit"
+              id="submit-btn"
+              class="signup_submit"
+              onclick="signUp(event)"
+            >
+              <span class="button_text">Sign Up</span>
+            </button>
+          </form>
+        </div>
+        <div class="screen_background">
+          <span class="screen_background_shape screen_background_shape4"></span>
+          <span class="screen_background_shape screen_background_shape3"></span>
+          <span class="screen_background_shape screen_background_shape2"></span>
+          <span class="screen_background_shape screen_background_shape1"></span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const alertBoxSuccess = document.getElementById("alert-box-success");
+      const alertBoxFail = document.getElementById("alert-box-fail");
+      const successMessage = document.getElementById("success-message");
+      const failMessage = document.getElementById("fail-message");
+      const successButton = document.getElementById("success-button");
+      const failButton = document.getElementById("fail-button");
+
+      async function signUp(event) {
+        event.preventDefault();
+        const email = document.getElementById("emailInput").value;
+        const passwordRepeat = document.getElementById(
+          "passwordInputRepeat"
+        ).value;
+        const password = document.getElementById("passwordInput").value;
+        const fullname = document.getElementById("nameInput").value;
+        try {
+          if (email === "" || password === "" || fullname == "") {
+            showFailure("Can not leave any fields empty.");
+            return;
+          }
+          const emailRegex = /[a-zA-Z0-9._-]+@[a-zA-Z]+\.[a-zA-Z]+$/;
+          if (!emailRegex.test(email)) {
+            showFailure("Invalid Emails.");
+            return;
+          }
+          if (password !== passwordRepeat) {
+            showFailure("2 entered passwords is different.");
+            return;
+          }
+          if (password.length <= 6) {
+            showFailure("Password can not be shorter than 6 characters.");
+            return;
+          }
+          const requestBody = {
+            fullname: fullname,
+            email: email,
+            password: password,
+          };
+          const response = await fetch("/api/v1/signUp", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+          });
+          if (response.ok) {
+            showSuccess("Sign Up successful.");
+          } else {
+            console.log(response);
+            const error = await response.json();
+            showFailure(error.message);
+          }
+        } catch (error) {
+          showFailure(error);
+        }
+      }
+
+      function showSuccess(message) {
+        successMessage.innerHTML = message;
+        alertBoxSuccess.style.display = "block";
+      }
+      function showFailure(message) {
+        failMessage.innerHTML = message;
+        alertBoxFail.style.display = "block";
+      }
+      function hideSuccessAlert(event) {
+        event.preventDefault();
+        alertBoxSuccess.style.display = "none";
+        window.location.href = "/";
+      }
+      function hideFailureAlert(event) {
+        event.preventDefault();
+        alertBoxFail.style.display = "none";
+      }
+    </script>
+  </body>
+</html>

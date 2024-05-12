@@ -1,0 +1,31 @@
+<div class="page-info"><%= currentPage %> of <%= totalPages %> pages</div>
+
+<div class="emails">
+  <% if (data && data.length > 0) { %> <% data.forEach(email => { %>
+  <a href="/mail/<%= email.mailID %>" class="email-link">
+    <div class="email">
+      <div class="title">
+        <b class="title1"><%= email.senderName %></b>
+      </div>
+      <div class="email-description">
+        <b><%= email.subject %></b>
+        <span class="email-body"><%= email.body %></span>
+      </div>
+      <div class="date"><%= email.date %></div>
+    </div>
+  </a>
+  <% }); %> <% } else { %>
+  <p>No emails in the outbox.</p>
+  <% } %>
+</div>
+
+<div class="pagination">
+  <% for (let i = 1; i <= totalPages; i++) { %>
+  <a
+    href="/outbox?page=<%= i %>"
+    class="<%= i === currentPage ? 'active' : '' %>"
+  >
+    <%= i %>
+  </a>
+  <% } %>
+</div>

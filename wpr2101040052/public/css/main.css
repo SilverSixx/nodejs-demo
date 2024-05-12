@@ -1,0 +1,57 @@
+body {
+  margin: 0;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  background-color: #f6f8fc;
+  width: 100%;
+}
+
+header div{
+  margin-left: 78%;
+}
+
+header h1{
+  margin-left: 2%;
+}
+nav {
+  width: 200px;
+  height: 86.4vh;
+  background-color: #f6f8fc;
+  float: left;
+}
+
+nav a {
+  display: block;
+  padding: 15px;
+  margin-left: 30px;
+
+}
+
+main {
+  margin-left: 300px;
+  padding: 30px;
+}
+
+.outbox-page,
+.inbox-page, 
+.detail-page {
+  display: none;
+}
+#sign-out-btn {
+  background-color: #882320;
+  color: #fff;
+  padding: 10px ;
+  border: none;
+  cursor: pointer;
+  margin-left: 2%;
+}
+
+footer {
+  clear: both;
+  padding: 1%;
+  background-color: #f6f8fc;
+  color: #333;
+}

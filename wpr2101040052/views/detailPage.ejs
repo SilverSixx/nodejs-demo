@@ -1,0 +1,18 @@
+<div class="email-detail">
+  <h1>
+    <% if (mail.subject) { %> <%= mail.subject %> <% } else { %> No Subject <% }
+    %>
+  </h1>
+  <h3>Body</h3>
+  <% if (mail.body) { %>
+  <p><%= mail.body %></p>
+  <% } else { %>
+  <p>No content</p>
+  <% } %>
+  <h2>Attachments here</h2>
+  <% if (mail.attachment_path) { %>
+  <a href="<%= mail.attachment_path %>" download>Download here.</a>
+  <% } else { %>
+  <p>No attachments</p>
+  <% } %>
+</div>
